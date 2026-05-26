@@ -1,0 +1,734 @@
+---
+title: "Analisis Customer Behavior untuk Mendukung Strategi Customer Relationship Management pada Database Sakila"
+author: "SIM | CM1 | M0725001 | Alisia Surani"
+date: "2026-05-21"
+output: 
+  html_document:
+    theme: flatly
+    toc: true
+    toc_float: true
+    highlight: tango
+    code_folding: show
+    toc_depth: 4
+    
+---
+
+
+```{css, echo=FALSE}
+.title {
+ background: linear-gradient(135deg, #1B263B, #415A77);
+  color: white;
+padding: 20px 35px;
+border-radius: 20px;
+margin-bottom: 30px;
+display: inline-block;
+text-align: center;"
+}
+
+.author,
+.date {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1B263B;
+    text-align: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.section {
+scroll-margin-top: 20px;
+}
+
+body{
+    font-family: "Segoe UI";
+    background-color: #F5F7FA;
+    color: #2C3E50;
+    line-height: 1.8;
+}
+
+h1{
+    color: #1B263B;
+    font-weight: bold;
+}
+
+h2{
+    color: #2C3E50;
+    margin-top: 40px;
+    font-weight: bold;
+    border-bottom: 3px solid #5B8FF9;
+    padding-bottom: 10px;
+}
+
+h3{
+    color: #3A506B;
+    border-bottom: 3px solid #5B8FF9;
+    margin-top: 40px;
+}
+
+h4{
+    color: #3A506B;
+    margin-top: 70px;
+}
+
+pre{
+    border-radius: 12px;
+}
+
+blockquote{
+    background-color: white;
+    border-left: 6px solid #5B8FF9;
+    padding: 15px;
+    border-radius: 12px;
+}
+
+.main-container{
+    max-width: 1200px;
+}
+
+code{
+    color: #5B8FF9;
+    
+html, body {
+    overflow-x: hidden;
+}
+
+.main-container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+}
+```
+
+```{r koneksidata, echo=FALSE}
+sakila <- DBI::dbConnect(odbc::odbc(),
+ Driver = "MySQL ODBC 8.4 ANSI Driver",
+ Server = "127.0.0.1",
+ Database = "sakila",
+ UID = "root",
+ PWD = "BASDAT25",
+ Port = 3306)
+```
+
+
+## 1. Pendahuluan
+Database Sakila merupakan database simulasi rental film yang disediakan oleh MySQL. Database ini berisi data mengenai pelanggan, film, transaksi rental, pembayaran, kategori film, dan berbagai informasi lainnya yang berkaitan dengan bisnis rental film.
+
+Pada penelitian ini dilakukan analisis *customer behavior* untuk mendukung strategi *Customer Relationship Management*. Analisis difokuskan pada aktivitas pelanggan berdasarkan data transaksi rental dan pembayaran yang terdapat pada database Sakila.
+
+Beberapa analisis yang dilakukan meliputi:
+
+- Identifikasi *high value customer* berdasarkan total pembayaran pelanggan.
+- Analisis frekuensi rental pelanggan.
+- Analisis genre film yang paling diminati pelanggan.
+- Analisis total revenue dan rata-rata pembayaran pelanggan.
+- Serta analisis korelasi untuk melihat hubungan antar total pembayaran dengan total rental.
+
+Analisis dilakukan menggunakan bahasa pemrograman R dengan memanfaatkan query SQL pada database Sakila. Hasil analisis divisualisasikan dalam bentuk dashboard dan grafik guna mempermudah interpretasi data dan pengambilan keputusan.
+
+
+```{r setup, message=FALSE, warning=FALSE}
+### Menyiapkan Packages yang akan digunakan
+library(DBI)
+library(odbc)
+library(dplyr)
+library(ggplot2)
+library(plotly)
+library(scales)
+library(DT)
+```
+
+```{r}
+### Mengambil data dari sql
+
+total_revenue <- dbGetQuery(sakila,
+"SELECT SUM(amount) AS revenue FROM payment")
+
+total_customer <- dbGetQuery(sakila,
+"SELECT COUNT(*) AS customer FROM customer")
+
+total_rental <- dbGetQuery(sakila,
+"SELECT COUNT(*) AS rental FROM rental")
+
+top_genre <- dbGetQuery(sakila,"
+SELECT c.name, COUNT(*) AS total
+FROM category c
+JOIN film_category fc
+ON c.category_id = fc.category_id
+JOIN inventory i
+ON fc.film_id = i.film_id
+JOIN rental r
+ON i.inventory_id = r.inventory_id
+GROUP BY c.name
+ORDER BY total DESC
+LIMIT 1
+")
+```
+
+### *Total Revenue*
+$$TR = \sum_{i=1}^{n} Payment_i$$
+```{r results='asis', echo=FALSE}
+cat('
+<div style="
+background:#EEF4FF;
+padding:20px;
+border-left:6px solid #5B8FF9;
+border-radius:12px;
+margin-top:15px;
+margin-bottom:20px;
+">
+
+<b>keterangan:</b><br>
+
+Total revenue digunakan untuk mengetahui total pendapatan yang diperoleh perusahaan dari seluruh total transaksi pembayaran pelanggan.
+</div>
+')
+```
+
+### *Total Customer*
+$$TC = \sum_{i=1}^{n} Customer_i$$
+```{r results='asis', echo=FALSE}
+cat('
+<div style="
+background:#EEF4FF;
+padding:20px;
+border-left:6px solid #5B8FF9;
+border-radius:12px;
+margin-top:15px;
+margin-bottom:20px;
+">
+
+<b>keterangan:</b><br>
+
+Total Customer digunakan untuk memperoleh informasi mengenai jumlah keseluruhan pelanggan yang terdaftar pada sistem rental film.
+</div>
+')
+```
+ 
+### *Total Rental*
+$$TRen = \sum_{i=1}^{n} Rental_i$$
+```{r results='asis', echo=FALSE}
+cat('
+<div style="
+background:#EEF4FF;
+padding:20px;
+border-left:6px solid #5B8FF9;
+border-radius:12px;
+margin-top:15px;
+margin-bottom:20px;
+">
+
+<b>keterangan:</b><br>
+
+Total Rental digunakan untuk mengetahui jumlah keseluruhan aktivitas rental film yang dilakukan pelanggan.
+</div>
+')
+```
+
+
+
+```{r results='asis', echo=FALSE}
+
+cat(paste0('
+
+<!-- Visualisasi -->
+
+<div style="
+display:grid;
+grid-template-columns: repeat(4, 1fr);
+gap:20px;
+margin-bottom:45px;
+">
+
+<!-- CARD 1 -->
+<div style="
+background:white;
+padding:25px 20px;
+border-radius:18px;
+text-align:center;
+box-shadow:0 6px 16px rgba(0,0,0,0.08);
+min-height:170px;
+">
+
+<div style="
+font-size:18px;
+font-weight:600;
+color:#6C757D;
+margin-bottom:20px;
+">
+
+Total Revenue
+
+</div>
+
+<div style="
+font-size:32px;
+font-weight:800;
+color:#1B263B;
+word-break:break-word;
+">
+
+$', round(total_revenue$revenue,2), '
+
+</div>
+
+</div>
+
+<!-- CARD 2 -->
+<div style="
+background:white;
+padding:25px 20px;
+border-radius:18px;
+text-align:center;
+box-shadow:0 6px 16px rgba(0,0,0,0.08);
+min-height:170px;
+">
+
+<div style="
+font-size:18px;
+font-weight:600;
+color:#6C757D;
+margin-bottom:20px;
+">
+
+Total Customer
+
+</div>
+
+<div style="
+font-size:32px;
+font-weight:800;
+color:#1B263B;
+">
+
+', total_customer$customer, '
+
+</div>
+
+</div>
+
+<!-- CARD 3 -->
+<div style="
+background:white;
+padding:25px 20px;
+border-radius:18px;
+text-align:center;
+box-shadow:0 6px 16px rgba(0,0,0,0.08);
+min-height:170px;
+">
+
+<div style="
+font-size:18px;
+font-weight:600;
+color:#6C757D;
+margin-bottom:20px;
+">
+
+Total Rental
+
+</div>
+
+<div style="
+font-size:32px;
+font-weight:800;
+color:#1B263B;
+">
+
+', total_rental$rental, '
+
+</div>
+
+</div>
+
+<!-- CARD 4 -->
+<div style="
+background:white;
+padding:25px 20px;
+border-radius:18px;
+text-align:center;
+box-shadow:0 6px 16px rgba(0,0,0,0.08);
+min-height:170px;
+">
+
+<div style="
+font-size:18px;
+font-weight:600;
+color:#6C757D;
+margin-bottom:20px;
+">
+
+Top Genre
+
+</div>
+
+<div style="
+font-size:32px;
+font-weight:800;
+color:#1B263B;
+word-break:break-word;
+">
+
+', top_genre$name, '
+
+</div>
+
+</div>
+
+</div>
+
+'))
+```
+
+
+## 2. Analisis
+Dalam analisis customer behavior, indikator yang dianalisis meliputi pelanggan dengan total pembayaran tertinggi (*high value customer*), pola aktivitas rental pelanggan, preferensi genre film pelanggan, serta hubungan antara aktivitas rental dan pembayaran pelanggan melalui correlation analysis. Analisis ini dilakukan untuk memahami perilaku pelanggan, mengetahui pelanggan yang memberikan kontribusi terbesar terhadap pendapatan perusahaan, serta mendukung penerapan strategi *Customer Relationship Management* yang lebih efektif dan tepat sasaran. 
+
+
+### 2.1 High Value Customer
+
+#### 2.1.1 Mengambil data
+```{r}
+customer_value <- dbGetQuery(sakila, "
+SELECT 
+    CONCAT(c.first_name, ' ', c.last_name) AS customer_name,
+    SUM(p.amount) AS total_payment
+FROM customer c
+JOIN rental r 
+ON c.customer_id = r.customer_id
+JOIN payment p 
+ON r.rental_id = p.rental_id
+GROUP BY c.customer_id, customer_name
+ORDER BY total_payment DESC
+LIMIT 20
+")
+```
+
+#### 2.1.2 Visualisasi
+```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=8}
+customer_top5 <- customer_value %>%
+  arrange(desc(total_payment)) %>%
+  head(5)
+
+greens <- c(
+  "#1B4332",
+  "#2D6A4F",
+  "#40916C",
+  "#74C69D",
+  "#B7E4C7"
+)
+
+ggplot(customer_top5,
+       aes(x=2,
+           y=total_payment,
+           fill=factor(customer_name,
+                       levels=customer_name))) +
+
+  geom_col(color="white",linewidth=1)+
+
+  coord_polar(theta="y") +
+
+  xlim(0.5, 2.5) +
+  scale_fill_manual(values=greens) +
+  
+   geom_text(aes(label=paste0("$", round(total_payment,0))),
+            position=position_stack(vjust=0.5),
+            color="white",
+            size=4,
+            fontface="bold") +
+
+  labs(
+    title="TOP 5 High Value Customer",
+    fill="Customer"
+  ) +
+
+  theme_void() +
+
+  theme(
+    plot.title = element_text(
+      size=16,
+      face="bold",
+      hjust=0.5
+    ),
+
+    legend.position = "right",
+    legend.title = element_text(face="bold"),
+    legend.text = element_text(size=10)
+  )
+```
+
+#### 2.1.3 Table TOP Customer
+
+```{r}
+datatable(customer_value,
+          options = list(pageLength = 5),
+          rownames = (FALSE))
+```
+
+#### 2.1.4 Intepretasi
+```{r results='asis', echo=FALSE}
+cat('
+<div style="
+background:#EEF4FF;
+padding:20px;
+border-left:6px solid #5B8FF9;
+border-radius:12px;
+margin-top:15px;
+margin-bottom:20px;
+">
+
+<b>Intepretasi:</b><br>
+
+Analisis data menunjukkan adanya kelompok high-value customers yang berkontribusi signifikan terhadap pendapatan perusahaan, dengan lima pelanggan teratas di antaranya adalah Karl Seal hingga Rhonda Kennedy. Dalam manajemen hubungan pelanggan (CRM), temuan ini sangat strategis untuk merancang program loyalitas, keanggotaan premium, serta promosi eksklusif yang ditujukan untuk menjaga retensi pelanggan potensial tersebut.
+</div>
+')
+```
+
+
+### 2.2 Customer Activity Pattern
+
+#### 2.2.1 Mengambil Data
+```{r, message=FALSE, warning=FALSE, }
+activity_pattern <-dbGetQuery(sakila, "
+SELECT
+DAYNAME(rental_date) AS day_name,
+HOUR(rental_date)  AS hour_rental,
+COUNT(*) AS total_rental
+FROM rental
+GROUP BY day_name, hour_rental
+")
+```
+
+#### 2.2.2 Visualisasi
+```{r,  out.width='100%',}
+activity_pattern$total_rental <- 
+  as.numeric(activity_pattern$total_rental)
+
+ggplot(activity_pattern,
+       aes(x = factor(hour_rental),
+           y = day_name,
+           fill = total_rental)) +
+  
+  geom_tile(color = "white",
+            linewidth = 1.2,
+            width = 0.95,
+            height = 0.95) +
+  
+  geom_text(aes(label = total_rental),
+            size = 2.8,
+            fontface = "bold",
+            color = ifelse(activity_pattern$total_rental >
+                             mean(activity_pattern$total_rental),
+                           "white",
+                           "#2d2d2d")) +
+  
+  scale_fill_gradientn(
+    colours = c("#FFF5F7",
+                "#FFB3C1",
+                "#C9184A",
+                "#7B2CBF",
+                "#240046"),
+    name = "Total\nRental"
+  ) +
+  
+  labs(
+    title = "Heatmap: Customer Rental Activity",
+    subtitle = "Aktivitas penyewaan pelanggan berdasarkan hari dan jam",
+    x = "Hour",
+    y = "",
+    caption = "Sumber: Database Sakila"
+  ) +
+  
+  theme_minimal(base_size = 13) +
+  
+  theme(
+    plot.title = element_text(
+      face = "bold",
+      size = 16,
+      color = "#1a1a2e"
+    ),
+    
+    plot.subtitle = element_text(
+      size = 11,
+      color = "#6c757d"
+    ),
+    
+    axis.text.x = element_text(
+      face = "bold",
+      size = 10
+    ),
+    
+    axis.text.y = element_text(
+      face = "bold",
+      size = 11
+    ),
+    
+    panel.grid = element_blank(),
+    
+    plot.background = element_rect(
+      fill = "#fafafa",
+      color = NA
+    ),
+    
+    panel.background = element_rect(
+      fill = "#fafafa",
+      color = NA
+    )
+  )
+```
+
+#### 2.2.3 Intepretasi
+```{r results='asis', echo=FALSE}
+cat('
+<div style="
+background:#EEF4FF;
+padding:20px;
+border-left:6px solid #5B8FF9;
+border-radius:12px;
+margin-top:15px;
+margin-bottom:20px;
+">
+
+<b>Intepretasi:</b><br>
+
+Berdasarkan visualisasi data melalui heatmap diatas, ditemukan pola perilaku yang menunjukkan bahwa aktivitas penyewaan pelanggan sangat dipengaruhi oleh faktor waktu. Puncak aktivitas tertinggi (peak activity) secara signifikan terjadi pada hari Selasa pukul 15.00, dengan volume transaksi mencapai titik optimal di atas 250 rental. Sementara itu, distribusi transaksi pada hari dan jam lainnya cenderung stabil dan merata pada tingkat yang lebih rendah, yaitu berkisar antara 100 hingga 150 transaksi. Temuan ini dapat digunakan sebagai dasar bagi strategi CRM untuk melakukan optimasi operasional. Perusahaan dapat menerapkan strategi promosi terprogram, seperti memberikan insentif khusus pada periode sepi (off-peak) untuk meratakan volume transaksi, atau memaksimalkan pendapatan melalui program happy hour tepat pada waktu puncak aktivitas tersebut.
+</div>
+')
+```
+
+### 2.3 Genre Reference
+#### 2.3.1 Mengambil Data
+```{r}
+genre_pref <- dbGetQuery(sakila,"
+SELECT
+c.name AS category,
+COUNT(r.rental_id) AS total_rental,
+SUM(p.amount) AS total_revenue
+FROM category c
+JOIN film_category fc
+ON c.category_id = fc.category_id
+JOIN inventory i
+ON fc.film_id = i.film_id
+JOIN rental r
+ON i.inventory_id = r.inventory_id
+JOIN payment p
+on r.rental_id = p.rental_id
+GROUP BY c.name
+ORDER BY total_rental
+DESC")
+```
+
+#### 2.3.2 Visualisasi
+```{r, message=FALSE, warning=FALSE}
+p2 <- ggplot(genre_pref,
+             aes(x = reorder(category, total_rental),
+                 y = total_rental,
+                 text = paste(
+                   "Genre:", category,
+                   "<br>Total Rental", total_rental
+                 ))) +
+  geom_col(fill="#415A77") + coord_flip() +
+  labs(
+    title = "Genre Preference Based on Rental Activity",
+    x = "Genre",
+    y = "Total Rental" ) +
+  theme_minimal(base_size = 13)
+
+ggplotly(p2, tooltip = "text")
+```
+
+#### 2.3.3 Intepretasi
+```{r results='asis', echo=FALSE}
+cat('
+<div style="
+background:#EEF4FF;
+padding:20px;
+border-left:6px solid #5B8FF9;
+border-radius:12px;
+margin-top:15px;
+margin-bottom:20px;
+">
+
+<b>Intepretasi:</b><br>
+
+Berdasarkan grafik "Genre Preference Based on Rental Activity", terlihat perbedaan preferensi pelanggan yang jelas terhadap kategori film yang disewa. Genre Sports, Animation, dan Action menjadi tiga kategori paling populer dengan volume penyewaan tertinggi mendekati 1.200 transaksi, sementara Horror, Travel, dan Music menempati posisi terendah. Data preferensi ini dapat memberikan landasan strategis bagi manajemen dalam mengoptimalkan pengadaan inventaris film berbasis genre terpopuler. Selain itu, informasi ini sangat berguna untuk menyusun strategi CRM, seperti penargetan promosi yang dipersonalisasi dan pengembangan sistem rekomendasi film yang lebih akurat guna meningkatkan kepuasan serta loyalitas pelanggan.
+</div>
+')
+```
+
+### 2.4 Correlation Analysis
+
+#### 2.4.1 Mengambil Data
+```{r}
+customer_corr <- dbGetQuery(sakila,"
+SELECT 
+    c.customer_id,
+    COUNT(r.rental_id) AS total_rental,
+    SUM(p.amount) AS total_payment
+FROM customer c
+JOIN rental r
+ON c.customer_id = r.customer_id
+JOIN payment p
+ON r.rental_id = p.rental_id
+GROUP BY c.customer_id
+")
+```
+
+#### 2.4.2 Visualisasi
+```{r, message=FALSE, warning=FALSE}
+ggplot(customer_corr,
+       aes(x=total_rental,
+           y=total_payment)) +
+
+  geom_point(color="#5B8FF9",
+             size=3,
+             alpha=0.7) +
+
+  geom_smooth(method="lm",
+              se=FALSE,
+              color="#1B263B") +
+
+  labs(
+    title="Relationship Between Rental Frequency and Payment",
+    x="Total Rental",
+    y="Total Payment" ) +
+
+  theme_minimal(base_size = 13)
+```
+
+#### 2.4.3 Intepretasi
+```{r results='asis', echo=FALSE}
+cat('
+<div style="
+background:#EEF4FF;
+padding:20px;
+border-left:6px solid #5B8FF9;
+border-radius:12px;
+margin-top:15px;
+margin-bottom:20px;
+">
+
+<b>Intepretasi:</b><br>
+
+Berdasarkan grafik scatter plot pada bagian "Correlation Analysis", terdapat hubungan positif yang kuat antara Total Rental dan Total Payment. Pola data menunjukkan bahwa semakin sering pelanggan menyewa, semakin besar pula pendapatan yang diterima perusahaan. Implikasinya, perusahaan perlu fokus membuat program yang menjaga agar pelanggan terus menyewa secara berulang. Strategi ini bisa dilakukan dengan memberikan reward atau diskon khusus setelah mereka mencapai jumlah penyewaan tertentu, sehingga pelanggan merasa untung dan terus bertransaksi dalam jangka panjang.
+</div>
+')
+```
+
+
+## Kesimpulan
+Analisis *customer behavior* menggunakan database Sakila memberikan pemahaman mendalam yang sangat strategis bagi optimalisasi *Customer Relationship Management* (CRM) perusahaan. Hasil evaluasi data menunjukkan adanya hubungan linear positif yang kuat antara Total Rental dan jumlah pembayaran *Total Payment*. Hal ini mengonfirmasi bahwa loyalitas pelanggan dalam melakukan transaksi berulang berdampak langsung pada peningkatan pendapatan perusahaan, dengan kelompok *high-value customers* seperti Karl Seal hingga Rhonda Kennedy sebagai kontributor finansial terbesar. Di sisi lain, aktivitas transaksional ini juga sangat dipengaruhi oleh faktor waktu dan preferensi produk. Pola operasional harian menunjukkan adanya lonjakan trafik yang signifikan pada hari Selasa pukul 15.00 sebagai waktu puncak (*peak activity*), sementara preferensi konten pelanggan didominasi secara kuat oleh genre *Sports*, *Animation*, dan *Action*.
+
+Berdasarkan temuan-temuan tersebut, strategi CRM ke depan harus difokuskan pada upaya retensi yang dipersonalisasi dan efisiensi operasional. Perusahaan dapat mempertahankan kelompok pelanggan bernilai tinggi melalui program loyalitas berbasis volume, seperti pemberian *reward* atau diskon progresif, serta penawaran keanggotaan premium. Selain itu, data diatas dan preferensi genre dapat digunakan sebagai landasan dalam merancang program pemasaran yang lebih presisi, misalnya dengan meluncurkan promo *happy hour* pada jam sibuk hari Selasa, memberikan insentif khusus pada periode sepi untuk meratakan keterisian rental, serta memprioritaskan pengadaan inventaris pada kategori film yang paling populer guna memaksimalkan kepuasan dan loyalitas pelanggan dalam jangka panjang.
+
+
+```{r results='asis', echo=FALSE}
+cat('
+<hr>
+
+<center>
+<p>
+Sistem Informasi Manajemen - Statistika 2025 - Universitas Sebelas Maret
+</p>
+</center>
+')
+```
