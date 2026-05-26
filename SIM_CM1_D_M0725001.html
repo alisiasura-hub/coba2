@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="SIM | CM1 | M0725001 | Alisia Surani" />
+
+<meta name="date" content="2026-05-21" />
+
+<title>Analisis Customer Behavior untuk Mendukung Strategi Customer Relationship Management pada Database Sakila</title>
+
+<script src="SIM_CM1_D_M0725001_files/header-attrs-2.31/header-attrs.js"></script>
+<script src="SIM_CM1_D_M0725001_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="SIM_CM1_D_M0725001_files/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="SIM_CM1_D_M0725001_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="SIM_CM1_D_M0725001_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="SIM_CM1_D_M0725001_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="SIM_CM1_D_M0725001_files/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="SIM_CM1_D_M0725001_files/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="SIM_CM1_D_M0725001_files/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="SIM_CM1_D_M0725001_files/navigation-1.1/tabsets.js"></script>
+<script src="SIM_CM1_D_M0725001_files/navigation-1.1/codefolding.js"></script>
+<link href="SIM_CM1_D_M0725001_files/htmltools-fill-0.5.9/fill.css" rel="stylesheet" />
+<script src="SIM_CM1_D_M0725001_files/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<link href="SIM_CM1_D_M0725001_files/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="SIM_CM1_D_M0725001_files/datatables-binding-0.34.0/datatables.js"></script>
+<link href="SIM_CM1_D_M0725001_files/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="SIM_CM1_D_M0725001_files/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="SIM_CM1_D_M0725001_files/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
+<link href="SIM_CM1_D_M0725001_files/crosstalk-1.2.2/css/crosstalk.min.css" rel="stylesheet" />
+<script src="SIM_CM1_D_M0725001_files/crosstalk-1.2.2/js/crosstalk.min.js"></script>
+<script src="SIM_CM1_D_M0725001_files/plotly-binding-4.12.0/plotly.js"></script>
+<script src="SIM_CM1_D_M0725001_files/typedarray-0.1/typedarray.min.js"></script>
+<link href="SIM_CM1_D_M0725001_files/plotly-htmlwidgets-css-2.25.2/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="SIM_CM1_D_M0725001_files/plotly-main-2.25.2/plotly-latest.min.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+.sourceCode .row {
+  width: 100%;
+}
+.sourceCode {
+  overflow-x: auto;
+}
+.code-folding-btn {
+  margin-right: -30px;
+}
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Analisis Customer Behavior untuk Mendukung
+Strategi Customer Relationship Management pada Database Sakila</h1>
+<h4 class="author">SIM | CM1 | M0725001 | Alisia Surani</h4>
+<h4 class="date">2026-05-21</h4>
+
+</div>
+
+
+<style type="text/css">
+.title {
+ background: linear-gradient(135deg, #1B263B, #415A77);
+  color: white;
+padding: 20px 35px;
+border-radius: 20px;
+margin-bottom: 30px;
+display: inline-block;
+text-align: center;"
+}
+
+.author,
+.date {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1B263B;
+    text-align: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.section {
+scroll-margin-top: 20px;
+}
+
+body{
+    font-family: "Segoe UI";
+    background-color: #F5F7FA;
+    color: #2C3E50;
+    line-height: 1.8;
+}
+
+h1{
+    color: #1B263B;
+    font-weight: bold;
+}
+
+h2{
+    color: #2C3E50;
+    margin-top: 40px;
+    font-weight: bold;
+    border-bottom: 3px solid #5B8FF9;
+    padding-bottom: 10px;
+}
+
+h3{
+    color: #3A506B;
+    border-bottom: 3px solid #5B8FF9;
+    margin-top: 40px;
+}
+
+h4{
+    color: #3A506B;
+    margin-top: 70px;
+}
+
+pre{
+    border-radius: 12px;
+}
+
+blockquote{
+    background-color: white;
+    border-left: 6px solid #5B8FF9;
+    padding: 15px;
+    border-radius: 12px;
+}
+
+.main-container{
+    max-width: 1200px;
+}
+
+code{
+    color: #5B8FF9;
+    
+html, body {
+    overflow-x: hidden;
+}
+
+.main-container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+}
+</style>
+<div id="pendahuluan" class="section level2">
+<h2>1. Pendahuluan</h2>
+<p>Database Sakila merupakan database simulasi rental film yang
+disediakan oleh MySQL. Database ini berisi data mengenai pelanggan,
+film, transaksi rental, pembayaran, kategori film, dan berbagai
+informasi lainnya yang berkaitan dengan bisnis rental film.</p>
+<p>Pada penelitian ini dilakukan analisis <em>customer behavior</em>
+untuk mendukung strategi <em>Customer Relationship Management</em>.
+Analisis difokuskan pada aktivitas pelanggan berdasarkan data transaksi
+rental dan pembayaran yang terdapat pada database Sakila.</p>
+<p>Beberapa analisis yang dilakukan meliputi:</p>
+<ul>
+<li>Identifikasi <em>high value customer</em> berdasarkan total
+pembayaran pelanggan.</li>
+<li>Analisis frekuensi rental pelanggan.</li>
+<li>Analisis genre film yang paling diminati pelanggan.</li>
+<li>Analisis total revenue dan rata-rata pembayaran pelanggan.</li>
+<li>Serta analisis korelasi untuk melihat hubungan antar total
+pembayaran dengan total rental.</li>
+</ul>
+<p>Analisis dilakukan menggunakan bahasa pemrograman R dengan
+memanfaatkan query SQL pada database Sakila. Hasil analisis
+divisualisasikan dalam bentuk dashboard dan grafik guna mempermudah
+interpretasi data dan pengambilan keputusan.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="do">### Menyiapkan Packages yang akan digunakan</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(DBI)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(odbc)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="fu">library</span>(plotly)</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="fu">library</span>(DT)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="do">### Mengambil data dari sql</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>total_revenue <span class="ot">&lt;-</span> <span class="fu">dbGetQuery</span>(sakila,</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="st">&quot;SELECT SUM(amount) AS revenue FROM payment&quot;</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>total_customer <span class="ot">&lt;-</span> <span class="fu">dbGetQuery</span>(sakila,</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="st">&quot;SELECT COUNT(*) AS customer FROM customer&quot;</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>total_rental <span class="ot">&lt;-</span> <span class="fu">dbGetQuery</span>(sakila,</span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="st">&quot;SELECT COUNT(*) AS rental FROM rental&quot;</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>top_genre <span class="ot">&lt;-</span> <span class="fu">dbGetQuery</span>(sakila,<span class="st">&quot;</span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="st">SELECT c.name, COUNT(*) AS total</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="st">FROM category c</span></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="st">JOIN film_category fc</span></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="st">ON c.category_id = fc.category_id</span></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="st">JOIN inventory i</span></span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="st">ON fc.film_id = i.film_id</span></span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a><span class="st">JOIN rental r</span></span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a><span class="st">ON i.inventory_id = r.inventory_id</span></span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a><span class="st">GROUP BY c.name</span></span>
+<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a><span class="st">ORDER BY total DESC</span></span>
+<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a><span class="st">LIMIT 1</span></span>
+<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a><span class="st">&quot;</span>)</span></code></pre></div>
+<div id="total-revenue" class="section level3">
+<h3><em>Total Revenue</em></h3>
+<p><span class="math display">\[TR = \sum_{i=1}^{n}
+Payment_i\]</span></p>
+<div style="
+background:#EEF4FF;
+padding:20px;
+border-left:6px solid #5B8FF9;
+border-radius:12px;
+margin-top:15px;
+margin-bottom:20px;
+">
+<p><b>keterangan:</b><br></p>
+<p>Total revenue digunakan untuk mengetahui total pendapatan yang
+diperoleh perusahaan dari seluruh total transaksi pembayaran
+pelanggan.</p>
+</div>
+</div>
+<div id="total-customer" class="section level3">
+<h3><em>Total Customer</em></h3>
+<p><span class="math display">\[TC = \sum_{i=1}^{n}
+Customer_i\]</span></p>
+<div style="
+background:#EEF4FF;
+padding:20px;
+border-left:6px solid #5B8FF9;
+border-radius:12px;
+margin-top:15px;
+margin-bottom:20px;
+">
+<p><b>keterangan:</b><br></p>
+<p>Total Customer digunakan untuk memperoleh informasi mengenai jumlah
+keseluruhan pelanggan yang terdaftar pada sistem rental film.</p>
+</div>
+</div>
+<div id="total-rental" class="section level3">
+<h3><em>Total Rental</em></h3>
+<p><span class="math display">\[TRen = \sum_{i=1}^{n}
+Rental_i\]</span></p>
+<div style="
+background:#EEF4FF;
+padding:20px;
+border-left:6px solid #5B8FF9;
+border-radius:12px;
+margin-top:15px;
+margin-bottom:20px;
+">
+<p><b>keterangan:</b><br></p>
+<p>Total Rental digunakan untuk mengetahui jumlah keseluruhan aktivitas
+rental film yang dilakukan pelanggan.</p>
+</div>
+<!-- Visualisasi -->
+<div style="
+display:grid;
+grid-template-columns: repeat(4, 1fr);
+gap:20px;
+margin-bottom:45px;
+">
+<!-- CARD 1 -->
+<div style="
+background:white;
+padding:25px 20px;
+border-radius:18px;
+text-align:center;
+box-shadow:0 6px 16px rgba(0,0,0,0.08);
+min-height:170px;
+">
+<div style="
+font-size:18px;
+font-weight:600;
+color:#6C757D;
+margin-bottom:20px;
+">
+<p>Total Revenue</p>
+</div>
+<div style="
+font-size:32px;
+font-weight:800;
+color:#1B263B;
+word-break:break-word;
+">
+<p>$67406.56</p>
+</div>
+</div>
+<!-- CARD 2 -->
+<div style="
+background:white;
+padding:25px 20px;
+border-radius:18px;
+text-align:center;
+box-shadow:0 6px 16px rgba(0,0,0,0.08);
+min-height:170px;
+">
+<div style="
+font-size:18px;
+font-weight:600;
+color:#6C757D;
+margin-bottom:20px;
+">
+<p>Total Customer</p>
+</div>
+<div style="
+font-size:32px;
+font-weight:800;
+color:#1B263B;
+">
+<p>599</p>
+</div>
+</div>
+<!-- CARD 3 -->
+<div style="
+background:white;
+padding:25px 20px;
+border-radius:18px;
+text-align:center;
+box-shadow:0 6px 16px rgba(0,0,0,0.08);
+min-height:170px;
+">
+<div style="
+font-size:18px;
+font-weight:600;
+color:#6C757D;
+margin-bottom:20px;
+">
+<p>Total Rental</p>
+</div>
+<div style="
+font-size:32px;
+font-weight:800;
+color:#1B263B;
+">
+<p>16044</p>
+</div>
+</div>
+<!-- CARD 4 -->
+<div style="
+background:white;
+padding:25px 20px;
+border-radius:18px;
+text-align:center;
+box-shadow:0 6px 16px rgba(0,0,0,0.08);
+min-height:170px;
+">
+<div style="
+font-size:18px;
+font-weight:600;
+color:#6C757D;
+margin-bottom:20px;
+">
+<p>Top Genre</p>
+</div>
+<div style="
+font-size:32px;
+font-weight:800;
+color:#1B263B;
+word-break:break-word;
+">
+<p>Sports</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="analisis" class="section level2">
+<h2>2. Analisis</h2>
+<p>Dalam analisis customer behavior, indikator yang dianalisis meliputi
+pelanggan dengan total pembayaran tertinggi (<em>high value
+customer</em>), pola aktivitas rental pelanggan, preferensi genre film
+pelanggan, serta hubungan antara aktivitas rental dan pembayaran
+pelanggan melalui correlation analysis. Analisis ini dilakukan untuk
+memahami perilaku pelanggan, mengetahui pelanggan yang memberikan
+kontribusi terbesar terhadap pendapatan perusahaan, serta mendukung
+penerapan strategi <em>Customer Relationship Management</em> yang lebih
+efektif dan tepat sasaran.</p>
+<div id="high-value-customer" class="section level3">
+<h3>2.1 High Value Customer</h3>
+<div id="mengambil-data" class="section level4">
+<h4>2.1.1 Mengambil data</h4>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>customer_value <span class="ot">&lt;-</span> <span class="fu">dbGetQuery</span>(sakila, <span class="st">&quot;</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="st">SELECT </span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="st">    CONCAT(c.first_name, &#39; &#39;, c.last_name) AS customer_name,</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="st">    SUM(p.amount) AS total_payment</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="st">FROM customer c</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="st">JOIN rental r </span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="st">ON c.customer_id = r.customer_id</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="st">JOIN payment p </span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="st">ON r.rental_id = p.rental_id</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="st">GROUP BY c.customer_id, customer_name</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="st">ORDER BY total_payment DESC</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="st">LIMIT 20</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="st">&quot;</span>)</span></code></pre></div>
+</div>
+<div id="visualisasi" class="section level4">
+<h4>2.1.2 Visualisasi</h4>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>customer_top5 <span class="ot">&lt;-</span> customer_value <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total_payment)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">5</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>greens <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="st">&quot;#1B4332&quot;</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="st">&quot;#2D6A4F&quot;</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>  <span class="st">&quot;#40916C&quot;</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>  <span class="st">&quot;#74C69D&quot;</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>  <span class="st">&quot;#B7E4C7&quot;</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>)</span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="fu">ggplot</span>(customer_top5,</span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x=</span><span class="dv">2</span>,</span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>           <span class="at">y=</span>total_payment,</span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>           <span class="at">fill=</span><span class="fu">factor</span>(customer_name,</span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>                       <span class="at">levels=</span>customer_name))) <span class="sc">+</span></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">color=</span><span class="st">&quot;white&quot;</span>,<span class="at">linewidth=</span><span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a>  <span class="fu">coord_polar</span>(<span class="at">theta=</span><span class="st">&quot;y&quot;</span>) <span class="sc">+</span></span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="fl">0.5</span>, <span class="fl">2.5</span>) <span class="sc">+</span></span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span>greens) <span class="sc">+</span></span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a>  </span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a>   <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label=</span><span class="fu">paste0</span>(<span class="st">&quot;$&quot;</span>, <span class="fu">round</span>(total_payment,<span class="dv">0</span>))),</span>
+<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a>            <span class="at">position=</span><span class="fu">position_stack</span>(<span class="at">vjust=</span><span class="fl">0.5</span>),</span>
+<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a>            <span class="at">color=</span><span class="st">&quot;white&quot;</span>,</span>
+<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a>            <span class="at">size=</span><span class="dv">4</span>,</span>
+<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a>            <span class="at">fontface=</span><span class="st">&quot;bold&quot;</span>) <span class="sc">+</span></span>
+<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a></span>
+<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a>    <span class="at">title=</span><span class="st">&quot;TOP 5 High Value Customer&quot;</span>,</span>
+<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a>    <span class="at">fill=</span><span class="st">&quot;Customer&quot;</span></span>
+<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a></span>
+<span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a>  <span class="fu">theme_void</span>() <span class="sc">+</span></span>
+<span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a></span>
+<span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb4-40"><a href="#cb4-40" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(</span>
+<span id="cb4-41"><a href="#cb4-41" tabindex="-1"></a>      <span class="at">size=</span><span class="dv">16</span>,</span>
+<span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a>      <span class="at">face=</span><span class="st">&quot;bold&quot;</span>,</span>
+<span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a>      <span class="at">hjust=</span><span class="fl">0.5</span></span>
+<span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a>    ),</span>
+<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a></span>
+<span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">&quot;right&quot;</span>,</span>
+<span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a>    <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">face=</span><span class="st">&quot;bold&quot;</span>),</span>
+<span id="cb4-48"><a href="#cb4-48" tabindex="-1"></a>    <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">10</span>)</span>
+<span id="cb4-49"><a href="#cb4-49" tabindex="-1"></a>  )</span></code></pre></div>
+<p><img src="SIM_CM1_D_M0725001_files/figure-html/unnamed-chunk-8-1.png" alt="" width="768" /></p>
+</div>
+<div id="table-top-customer" class="section level4">
+<h4>2.1.3 Table TOP Customer</h4>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">datatable</span>(customer_value,</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>          <span class="at">options =</span> <span class="fu">list</span>(<span class="at">pageLength =</span> <span class="dv">5</span>),</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>          <span class="at">rownames =</span> (<span class="cn">FALSE</span>))</span></code></pre></div>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-ece8df6b227347a9e209" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-ece8df6b227347a9e209">{"x":{"filter":"none","vertical":false,"data":[["KARL SEAL","ELEANOR HUNT","CLARA SHAW","MARION SNYDER","RHONDA KENNEDY","TOMMY COLLAZO","WESLEY BULL","TIM CARY","MARCIA DEAN","ANA BRADLEY","JUNE CARROLL","DIANE COLLINS","LENA JENSEN","ARNOLD HAVENS","CURTIS IRBY","MIKE WAY","DAISY BATES","TONYA CHAPMAN","LOUIS LEONE","GORDON ALLARD"],[221.55,216.54,195.58,194.61,194.61,186.62,177.6,175.61,175.58,174.66,173.63,169.65,168.68,167.67,167.62,166.65,162.62,161.68,161.65,160.68]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>customer_name<\/th>\n      <th>total_payment<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"columnDefs":[{"className":"dt-right","targets":1},{"name":"customer_name","targets":0},{"name":"total_payment","targets":1}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="intepretasi" class="section level4">
+<h4>2.1.4 Intepretasi</h4>
+<div style="
+background:#EEF4FF;
+padding:20px;
+border-left:6px solid #5B8FF9;
+border-radius:12px;
+margin-top:15px;
+margin-bottom:20px;
+">
+<p><b>Intepretasi:</b><br></p>
+<p>Analisis data menunjukkan adanya kelompok high-value customers yang
+berkontribusi signifikan terhadap pendapatan perusahaan, dengan lima
+pelanggan teratas di antaranya adalah Karl Seal hingga Rhonda Kennedy.
+Dalam manajemen hubungan pelanggan (CRM), temuan ini sangat strategis
+untuk merancang program loyalitas, keanggotaan premium, serta promosi
+eksklusif yang ditujukan untuk menjaga retensi pelanggan potensial
+tersebut.</p>
+</div>
+</div>
+</div>
+<div id="customer-activity-pattern" class="section level3">
+<h3>2.2 Customer Activity Pattern</h3>
+<div id="mengambil-data-1" class="section level4">
+<h4>2.2.1 Mengambil Data</h4>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>activity_pattern <span class="ot">&lt;-</span><span class="fu">dbGetQuery</span>(sakila, <span class="st">&quot;</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="st">SELECT</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="st">DAYNAME(rental_date) AS day_name,</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="st">HOUR(rental_date)  AS hour_rental,</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="st">COUNT(*) AS total_rental</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="st">FROM rental</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="st">GROUP BY day_name, hour_rental</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="st">&quot;</span>)</span></code></pre></div>
+</div>
+<div id="visualisasi-1" class="section level4">
+<h4>2.2.2 Visualisasi</h4>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>activity_pattern<span class="sc">$</span>total_rental <span class="ot">&lt;-</span> </span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">as.numeric</span>(activity_pattern<span class="sc">$</span>total_rental)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="fu">ggplot</span>(activity_pattern,</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(hour_rental),</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>           <span class="at">y =</span> day_name,</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>           <span class="at">fill =</span> total_rental)) <span class="sc">+</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>  </span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="at">color =</span> <span class="st">&quot;white&quot;</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>            <span class="at">linewidth =</span> <span class="fl">1.2</span>,</span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>            <span class="at">width =</span> <span class="fl">0.95</span>,</span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>            <span class="at">height =</span> <span class="fl">0.95</span>) <span class="sc">+</span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>  </span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> total_rental),</span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a>            <span class="at">size =</span> <span class="fl">2.8</span>,</span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a>            <span class="at">fontface =</span> <span class="st">&quot;bold&quot;</span>,</span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a>            <span class="at">color =</span> <span class="fu">ifelse</span>(activity_pattern<span class="sc">$</span>total_rental <span class="sc">&gt;</span></span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a>                             <span class="fu">mean</span>(activity_pattern<span class="sc">$</span>total_rental),</span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a>                           <span class="st">&quot;white&quot;</span>,</span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a>                           <span class="st">&quot;#2d2d2d&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a>  </span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a>  <span class="fu">scale_fill_gradientn</span>(</span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a>    <span class="at">colours =</span> <span class="fu">c</span>(<span class="st">&quot;#FFF5F7&quot;</span>,</span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a>                <span class="st">&quot;#FFB3C1&quot;</span>,</span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a>                <span class="st">&quot;#C9184A&quot;</span>,</span>
+<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a>                <span class="st">&quot;#7B2CBF&quot;</span>,</span>
+<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a>                <span class="st">&quot;#240046&quot;</span>),</span>
+<span id="cb7-28"><a href="#cb7-28" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">&quot;Total</span><span class="sc">\n</span><span class="st">Rental&quot;</span></span>
+<span id="cb7-29"><a href="#cb7-29" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb7-30"><a href="#cb7-30" tabindex="-1"></a>  </span>
+<span id="cb7-31"><a href="#cb7-31" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb7-32"><a href="#cb7-32" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Heatmap: Customer Rental Activity&quot;</span>,</span>
+<span id="cb7-33"><a href="#cb7-33" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">&quot;Aktivitas penyewaan pelanggan berdasarkan hari dan jam&quot;</span>,</span>
+<span id="cb7-34"><a href="#cb7-34" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Hour&quot;</span>,</span>
+<span id="cb7-35"><a href="#cb7-35" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb7-36"><a href="#cb7-36" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">&quot;Sumber: Database Sakila&quot;</span></span>
+<span id="cb7-37"><a href="#cb7-37" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb7-38"><a href="#cb7-38" tabindex="-1"></a>  </span>
+<span id="cb7-39"><a href="#cb7-39" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">13</span>) <span class="sc">+</span></span>
+<span id="cb7-40"><a href="#cb7-40" tabindex="-1"></a>  </span>
+<span id="cb7-41"><a href="#cb7-41" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb7-42"><a href="#cb7-42" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(</span>
+<span id="cb7-43"><a href="#cb7-43" tabindex="-1"></a>      <span class="at">face =</span> <span class="st">&quot;bold&quot;</span>,</span>
+<span id="cb7-44"><a href="#cb7-44" tabindex="-1"></a>      <span class="at">size =</span> <span class="dv">16</span>,</span>
+<span id="cb7-45"><a href="#cb7-45" tabindex="-1"></a>      <span class="at">color =</span> <span class="st">&quot;#1a1a2e&quot;</span></span>
+<span id="cb7-46"><a href="#cb7-46" tabindex="-1"></a>    ),</span>
+<span id="cb7-47"><a href="#cb7-47" tabindex="-1"></a>    </span>
+<span id="cb7-48"><a href="#cb7-48" tabindex="-1"></a>    <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(</span>
+<span id="cb7-49"><a href="#cb7-49" tabindex="-1"></a>      <span class="at">size =</span> <span class="dv">11</span>,</span>
+<span id="cb7-50"><a href="#cb7-50" tabindex="-1"></a>      <span class="at">color =</span> <span class="st">&quot;#6c757d&quot;</span></span>
+<span id="cb7-51"><a href="#cb7-51" tabindex="-1"></a>    ),</span>
+<span id="cb7-52"><a href="#cb7-52" tabindex="-1"></a>    </span>
+<span id="cb7-53"><a href="#cb7-53" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(</span>
+<span id="cb7-54"><a href="#cb7-54" tabindex="-1"></a>      <span class="at">face =</span> <span class="st">&quot;bold&quot;</span>,</span>
+<span id="cb7-55"><a href="#cb7-55" tabindex="-1"></a>      <span class="at">size =</span> <span class="dv">10</span></span>
+<span id="cb7-56"><a href="#cb7-56" tabindex="-1"></a>    ),</span>
+<span id="cb7-57"><a href="#cb7-57" tabindex="-1"></a>    </span>
+<span id="cb7-58"><a href="#cb7-58" tabindex="-1"></a>    <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(</span>
+<span id="cb7-59"><a href="#cb7-59" tabindex="-1"></a>      <span class="at">face =</span> <span class="st">&quot;bold&quot;</span>,</span>
+<span id="cb7-60"><a href="#cb7-60" tabindex="-1"></a>      <span class="at">size =</span> <span class="dv">11</span></span>
+<span id="cb7-61"><a href="#cb7-61" tabindex="-1"></a>    ),</span>
+<span id="cb7-62"><a href="#cb7-62" tabindex="-1"></a>    </span>
+<span id="cb7-63"><a href="#cb7-63" tabindex="-1"></a>    <span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb7-64"><a href="#cb7-64" tabindex="-1"></a>    </span>
+<span id="cb7-65"><a href="#cb7-65" tabindex="-1"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(</span>
+<span id="cb7-66"><a href="#cb7-66" tabindex="-1"></a>      <span class="at">fill =</span> <span class="st">&quot;#fafafa&quot;</span>,</span>
+<span id="cb7-67"><a href="#cb7-67" tabindex="-1"></a>      <span class="at">color =</span> <span class="cn">NA</span></span>
+<span id="cb7-68"><a href="#cb7-68" tabindex="-1"></a>    ),</span>
+<span id="cb7-69"><a href="#cb7-69" tabindex="-1"></a>    </span>
+<span id="cb7-70"><a href="#cb7-70" tabindex="-1"></a>    <span class="at">panel.background =</span> <span class="fu">element_rect</span>(</span>
+<span id="cb7-71"><a href="#cb7-71" tabindex="-1"></a>      <span class="at">fill =</span> <span class="st">&quot;#fafafa&quot;</span>,</span>
+<span id="cb7-72"><a href="#cb7-72" tabindex="-1"></a>      <span class="at">color =</span> <span class="cn">NA</span></span>
+<span id="cb7-73"><a href="#cb7-73" tabindex="-1"></a>    )</span>
+<span id="cb7-74"><a href="#cb7-74" tabindex="-1"></a>  )</span></code></pre></div>
+<p><img src="SIM_CM1_D_M0725001_files/figure-html/unnamed-chunk-12-1.png" alt="" width="100%" /></p>
+</div>
+<div id="intepretasi-1" class="section level4">
+<h4>2.2.3 Intepretasi</h4>
+<div style="
+background:#EEF4FF;
+padding:20px;
+border-left:6px solid #5B8FF9;
+border-radius:12px;
+margin-top:15px;
+margin-bottom:20px;
+">
+<p><b>Intepretasi:</b><br></p>
+<p>Berdasarkan visualisasi data melalui heatmap diatas, ditemukan pola
+perilaku yang menunjukkan bahwa aktivitas penyewaan pelanggan sangat
+dipengaruhi oleh faktor waktu. Puncak aktivitas tertinggi (peak
+activity) secara signifikan terjadi pada hari Selasa pukul 15.00, dengan
+volume transaksi mencapai titik optimal di atas 250 rental. Sementara
+itu, distribusi transaksi pada hari dan jam lainnya cenderung stabil dan
+merata pada tingkat yang lebih rendah, yaitu berkisar antara 100 hingga
+150 transaksi. Temuan ini dapat digunakan sebagai dasar bagi strategi
+CRM untuk melakukan optimasi operasional. Perusahaan dapat menerapkan
+strategi promosi terprogram, seperti memberikan insentif khusus pada
+periode sepi (off-peak) untuk meratakan volume transaksi, atau
+memaksimalkan pendapatan melalui program happy hour tepat pada waktu
+puncak aktivitas tersebut.</p>
+</div>
+</div>
+</div>
+<div id="genre-reference" class="section level3">
+<h3>2.3 Genre Reference</h3>
+<div id="mengambil-data-2" class="section level4">
+<h4>2.3.1 Mengambil Data</h4>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>genre_pref <span class="ot">&lt;-</span> <span class="fu">dbGetQuery</span>(sakila,<span class="st">&quot;</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="st">SELECT</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="st">c.name AS category,</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="st">COUNT(r.rental_id) AS total_rental,</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="st">SUM(p.amount) AS total_revenue</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="st">FROM category c</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="st">JOIN film_category fc</span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="st">ON c.category_id = fc.category_id</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="st">JOIN inventory i</span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="st">ON fc.film_id = i.film_id</span></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="st">JOIN rental r</span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="st">ON i.inventory_id = r.inventory_id</span></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="st">JOIN payment p</span></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a><span class="st">on r.rental_id = p.rental_id</span></span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a><span class="st">GROUP BY c.name</span></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="st">ORDER BY total_rental</span></span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="st">DESC&quot;</span>)</span></code></pre></div>
+</div>
+<div id="visualisasi-2" class="section level4">
+<h4>2.3.2 Visualisasi</h4>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(genre_pref,</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(category, total_rental),</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>                 <span class="at">y =</span> total_rental,</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>                 <span class="at">text =</span> <span class="fu">paste</span>(</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>                   <span class="st">&quot;Genre:&quot;</span>, category,</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>                   <span class="st">&quot;&lt;br&gt;Total Rental&quot;</span>, total_rental</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>                 ))) <span class="sc">+</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill=</span><span class="st">&quot;#415A77&quot;</span>) <span class="sc">+</span> <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Genre Preference Based on Rental Activity&quot;</span>,</span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Genre&quot;</span>,</span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Total Rental&quot;</span> ) <span class="sc">+</span></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">13</span>)</span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a><span class="fu">ggplotly</span>(p2, <span class="at">tooltip =</span> <span class="st">&quot;text&quot;</span>)</span></code></pre></div>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-37d3598328ab75dc2da5" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-37d3598328ab75dc2da5">{"x":{"data":[{"orientation":"h","width":[0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999858,0.89999999999999947,0.90000000000000036,0.90000000000000036,0.90000000000000036,0.90000000000000036,0.90000000000000036,0.90000000000000013,0.89999999999999991],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[1179,1166,1112,1101,1096,1060,1050,1033,969,945,941,940,939,846,837,830],"y":[16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1],"text":["Genre: Sports <br>Total Rental 1179","Genre: Animation <br>Total Rental 1166","Genre: Action <br>Total Rental 1112","Genre: Sci-Fi <br>Total Rental 1101","Genre: Family <br>Total Rental 1096","Genre: Drama <br>Total Rental 1060","Genre: Documentary <br>Total Rental 1050","Genre: Foreign <br>Total Rental 1033","Genre: Games <br>Total Rental 969","Genre: Children <br>Total Rental 945","Genre: Comedy <br>Total Rental 941","Genre: New <br>Total Rental 940","Genre: Classics <br>Total Rental 939","Genre: Horror <br>Total Rental 846","Genre: Travel <br>Total Rental 837","Genre: Music <br>Total Rental 830"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(65,90,119,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":45.356579493565803,"r":8.6342880863428828,"b":44.034869240348698,"l":106.20174346201746},"paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":17.268576172685762},"title":{"text":"Genre Preference Based on Rental Activity","font":{"color":"rgba(0,0,0,1)","family":"","size":20.722291407222919},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-58.950000000000003,1237.95],"tickmode":"array","ticktext":["0","300","600","900","1200"],"tickvals":[0,300,599.99999999999989,900,1200],"categoryorder":"array","categoryarray":["0","300","600","900","1200"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.3171440431714405,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":13.814860938148611},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.78493528057662576,"zeroline":false,"anchor":"y","title":{"text":"Total Rental","font":{"color":"rgba(0,0,0,1)","family":"","size":17.268576172685762}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,16.600000000000001],"tickmode":"array","ticktext":["Music","Travel","Horror","Classics","New","Comedy","Children","Games","Foreign","Documentary","Drama","Family","Sci-Fi","Action","Animation","Sports"],"tickvals":[1,2,3.0000000000000004,4,5,6,7,8,9,10,11,12,13,14,15,16],"categoryorder":"array","categoryarray":["Music","Travel","Horror","Classics","New","Comedy","Children","Games","Foreign","Documentary","Drama","Family","Sci-Fi","Action","Animation","Sports"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":4.3171440431714414,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":13.814860938148611},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.78493528057662576,"zeroline":false,"anchor":"x","title":{"text":"Genre","font":{"color":"rgba(0,0,0,1)","family":"","size":17.268576172685762}},"hoverformat":".2f"},"shapes":[],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":13.814860938148611}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"2218df16c7b":{"x":{},"y":{},"text":{},"type":"bar"}},"cur_data":"2218df16c7b","visdat":{"2218df16c7b":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="intepretasi-2" class="section level4">
+<h4>2.3.3 Intepretasi</h4>
+<div style="
+background:#EEF4FF;
+padding:20px;
+border-left:6px solid #5B8FF9;
+border-radius:12px;
+margin-top:15px;
+margin-bottom:20px;
+">
+<p><b>Intepretasi:</b><br></p>
+<p>Berdasarkan grafik “Genre Preference Based on Rental Activity”,
+terlihat perbedaan preferensi pelanggan yang jelas terhadap kategori
+film yang disewa. Genre Sports, Animation, dan Action menjadi tiga
+kategori paling populer dengan volume penyewaan tertinggi mendekati
+1.200 transaksi, sementara Horror, Travel, dan Music menempati posisi
+terendah. Data preferensi ini dapat memberikan landasan strategis bagi
+manajemen dalam mengoptimalkan pengadaan inventaris film berbasis genre
+terpopuler. Selain itu, informasi ini sangat berguna untuk menyusun
+strategi CRM, seperti penargetan promosi yang dipersonalisasi dan
+pengembangan sistem rekomendasi film yang lebih akurat guna meningkatkan
+kepuasan serta loyalitas pelanggan.</p>
+</div>
+</div>
+</div>
+<div id="correlation-analysis" class="section level3">
+<h3>2.4 Correlation Analysis</h3>
+<div id="mengambil-data-3" class="section level4">
+<h4>2.4.1 Mengambil Data</h4>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>customer_corr <span class="ot">&lt;-</span> <span class="fu">dbGetQuery</span>(sakila,<span class="st">&quot;</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="st">SELECT </span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="st">    c.customer_id,</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="st">    COUNT(r.rental_id) AS total_rental,</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="st">    SUM(p.amount) AS total_payment</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="st">FROM customer c</span></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="st">JOIN rental r</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="st">ON c.customer_id = r.customer_id</span></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="st">JOIN payment p</span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a><span class="st">ON r.rental_id = p.rental_id</span></span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="st">GROUP BY c.customer_id</span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a><span class="st">&quot;</span>)</span></code></pre></div>
+</div>
+<div id="visualisasi-3" class="section level4">
+<h4>2.4.2 Visualisasi</h4>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">ggplot</span>(customer_corr,</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x=</span>total_rental,</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>           <span class="at">y=</span>total_payment)) <span class="sc">+</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color=</span><span class="st">&quot;#5B8FF9&quot;</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>             <span class="at">size=</span><span class="dv">3</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>             <span class="at">alpha=</span><span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">&quot;lm&quot;</span>,</span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a>              <span class="at">se=</span><span class="cn">FALSE</span>,</span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a>              <span class="at">color=</span><span class="st">&quot;#1B263B&quot;</span>) <span class="sc">+</span></span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a>    <span class="at">title=</span><span class="st">&quot;Relationship Between Rental Frequency and Payment&quot;</span>,</span>
+<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a>    <span class="at">x=</span><span class="st">&quot;Total Rental&quot;</span>,</span>
+<span id="cb11-16"><a href="#cb11-16" tabindex="-1"></a>    <span class="at">y=</span><span class="st">&quot;Total Payment&quot;</span> ) <span class="sc">+</span></span>
+<span id="cb11-17"><a href="#cb11-17" tabindex="-1"></a></span>
+<span id="cb11-18"><a href="#cb11-18" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">13</span>)</span></code></pre></div>
+<p><img src="SIM_CM1_D_M0725001_files/figure-html/unnamed-chunk-18-1.png" alt="" width="672" /></p>
+</div>
+<div id="intepretasi-3" class="section level4">
+<h4>2.4.3 Intepretasi</h4>
+<div style="
+background:#EEF4FF;
+padding:20px;
+border-left:6px solid #5B8FF9;
+border-radius:12px;
+margin-top:15px;
+margin-bottom:20px;
+">
+<p><b>Intepretasi:</b><br></p>
+<p>Berdasarkan grafik scatter plot pada bagian “Correlation Analysis”,
+terdapat hubungan positif yang kuat antara Total Rental dan Total
+Payment. Pola data menunjukkan bahwa semakin sering pelanggan menyewa,
+semakin besar pula pendapatan yang diterima perusahaan. Implikasinya,
+perusahaan perlu fokus membuat program yang menjaga agar pelanggan terus
+menyewa secara berulang. Strategi ini bisa dilakukan dengan memberikan
+reward atau diskon khusus setelah mereka mencapai jumlah penyewaan
+tertentu, sehingga pelanggan merasa untung dan terus bertransaksi dalam
+jangka panjang.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="kesimpulan" class="section level2">
+<h2>Kesimpulan</h2>
+<p>Analisis <em>customer behavior</em> menggunakan database Sakila
+memberikan pemahaman mendalam yang sangat strategis bagi optimalisasi
+<em>Customer Relationship Management</em> (CRM) perusahaan. Hasil
+evaluasi data menunjukkan adanya hubungan linear positif yang kuat
+antara Total Rental dan jumlah pembayaran <em>Total Payment</em>. Hal
+ini mengonfirmasi bahwa loyalitas pelanggan dalam melakukan transaksi
+berulang berdampak langsung pada peningkatan pendapatan perusahaan,
+dengan kelompok <em>high-value customers</em> seperti Karl Seal hingga
+Rhonda Kennedy sebagai kontributor finansial terbesar. Di sisi lain,
+aktivitas transaksional ini juga sangat dipengaruhi oleh faktor waktu
+dan preferensi produk. Pola operasional harian menunjukkan adanya
+lonjakan trafik yang signifikan pada hari Selasa pukul 15.00 sebagai
+waktu puncak (<em>peak activity</em>), sementara preferensi konten
+pelanggan didominasi secara kuat oleh genre <em>Sports</em>,
+<em>Animation</em>, dan <em>Action</em>.</p>
+<p>Berdasarkan temuan-temuan tersebut, strategi CRM ke depan harus
+difokuskan pada upaya retensi yang dipersonalisasi dan efisiensi
+operasional. Perusahaan dapat mempertahankan kelompok pelanggan bernilai
+tinggi melalui program loyalitas berbasis volume, seperti pemberian
+<em>reward</em> atau diskon progresif, serta penawaran keanggotaan
+premium. Selain itu, data diatas dan preferensi genre dapat digunakan
+sebagai landasan dalam merancang program pemasaran yang lebih presisi,
+misalnya dengan meluncurkan promo <em>happy hour</em> pada jam sibuk
+hari Selasa, memberikan insentif khusus pada periode sepi untuk
+meratakan keterisian rental, serta memprioritaskan pengadaan inventaris
+pada kategori film yang paling populer guna memaksimalkan kepuasan dan
+loyalitas pelanggan dalam jangka panjang.</p>
+<hr>
+<center>
+<p>
+Sistem Informasi Manajemen - Statistika 2025 - Universitas Sebelas Maret
+</p>
+</center>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
